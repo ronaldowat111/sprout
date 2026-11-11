@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Chore;
+use App\Models\Goal;
 use App\Models\Kid;
 use App\Models\PurchaseRequest;
 use App\Models\Transaction;
@@ -30,6 +31,61 @@ class LedgerService
     public function level(Kid $kid): int
     {
         return min(5, 1 + intdiv($this->earned($kid), 1000));
+    }
+
+    /** Average chore money per week over the last four weeks, in cents. */
+    public function weeklyChoreAverage(Kid $kid): int
+    {
+        $sum = (int) $kid->transactions()
+            ->where('type', 'chore')
+            ->where('created_at', '>=', now()->subWeeks(4))
+            ->sum('amount');
+
+        return intdiv($sum, 4);
+    }
+
+    /**
+     * Weeks until the goal is affordable from allowance + average chores.
+     * 0 means it is affordable now; null means there is no income to project from.
+     */
+    public function weeksToGoal(Kid $kid, Goal $goal): ?int
+    {
+        $missing = $goal->target_amount - $this->balance($kid);
+
+        if ($missing <= 0) {
+            return 0;
+        }
+
+        $perWeek = $kid->weekly_allowance + $this->weeklyChoreAverage($kid);
+
+        return $perWeek > 0 ? (int) ceil($missing / $perWeek) : null;
+    }
+
+    /** The kid as every screen needs them: money, level and current goal. */
+    public function summary(Kid $kid): array
+    {
+        $balance = $this->balance($kid);
+        $goal = $kid->activeGoal;
+
+        return [
+            'id' => $kid->id,
+            'name' => $kid->name,
+            'avatar' => $kid->avatar,
+            'balance' => $balance,
+            'level' => $this->level($kid),
+            'weeklyAllowance' => $kid->weekly_allowance,
+            'goal' => $goal ? [
+                'id' => $goal->id,
+                'title' => $goal->title,
+                'target' => $goal->target_amount,
+                'saved' => min($balance, $goal->target_amount),
+                'progress' => $goal->target_amount > 0
+                    ? (int) min(100, max(0, round($balance / $goal->target_amount * 100)))
+                    : 0,
+                'weeksLeft' => $this->weeksToGoal($kid, $goal),
+                'reached' => $balance >= $goal->target_amount,
+            ] : null,
+        ];
     }
 
     public function giveAllowance(Kid $kid): Transaction

@@ -163,7 +163,7 @@ return [
     'features' => [
         Features::registration(),
         Features::resetPasswords(),
-        Features::emailVerification(),
+        // Features::emailVerification(), // off: parents start the demo right after registering
         Features::twoFactorAuthentication([
             'confirm' => true,
             'confirmPassword' => true,
