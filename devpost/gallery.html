@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sprout Devpost Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,800&family=Plus+Jakarta+Sans:wght@600;700;800&display=block" rel="stylesheet">
+<style>
+  :root {
+    --ink: #141414; --sky: #8EC5FF; --sky-50: #DCEBFF; --grass: #5BD16A; --leaf: #3DDC5A;
+    --sun: #FFC93C; --orange: #FF9F4A; --pink: #FF8FB1; --cream: #FFF6E5; --paper: #F4F1EA; --muted: #4A4A4A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #888; font-family: "Plus Jakarta Sans", sans-serif; color: var(--ink); }
+
+  .slide { position: relative; width: 1500px; height: 1000px; overflow: hidden; margin-bottom: 20px; }
+  .slide.leaf { background: var(--leaf); }
+  .slide.orange { background: var(--orange); }
+  .slide.sky { background: var(--sky); }
+  .slide.sun { background: var(--sun); }
+  .slide.paper { background: var(--paper); }
+
+  .copy { position: absolute; left: 84px; top: 0; bottom: 0; width: 560px; display: flex; flex-direction: column; justify-content: center; }
+  .step {
+    align-self: flex-start; display: inline-flex; align-items: center; gap: 10px;
+    background: #fff; border: 4px solid var(--ink); border-radius: 999px; box-shadow: 4px 4px 0 var(--ink);
+    padding: 9px 22px 9px 12px; font-weight: 800; font-size: 22px;
+  }
+  .step i { font-style: normal; background: var(--ink); color: #fff; border-radius: 999px; padding: 2px 12px; font-size: 19px; }
+  h2 {
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 400;
+    font-size: 72px; line-height: 1.04; letter-spacing: -0.025em; margin-top: 30px;
+  }
+  h2 b { font-weight: 800; }
+  .sub { font-size: 27px; font-weight: 600; line-height: 1.42; margin-top: 26px; max-width: 540px; }
+  .brand {
+    position: absolute; left: 84px; bottom: 54px; font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 800; font-size: 34px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px;
+  }
+
+  .phones { position: absolute; right: 70px; top: 0; bottom: 0; display: flex; align-items: center; gap: 36px; }
+  .phone {
+    width: 360px; height: 779px; border: 5px solid var(--ink); border-radius: 46px; overflow: hidden;
+    box-shadow: 10px 10px 0 var(--ink); background: #fff; flex: none;
+  }
+  .phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .phones.three .phone { width: 262px; height: 567px; border-radius: 36px; box-shadow: 8px 8px 0 var(--ink); }
+  .phones.three { gap: 26px; right: 64px; }
+  .tilt-l { transform: rotate(-3deg); }
+  .tilt-r { transform: rotate(3deg); }
+  .lift { margin-top: -70px; }
+  .drop { margin-top: 70px; }
+
+  /* sticker list for the coach slide */
+  .tools { position: absolute; right: 520px; top: 200px; display: flex; flex-direction: column; gap: 18px; }
+  .tool {
+    background: #fff; border: 4px solid var(--ink); border-radius: 999px; box-shadow: 5px 5px 0 var(--ink);
+    padding: 12px 24px; font-weight: 800; font-size: 24px; white-space: nowrap; display: flex; align-items: center; gap: 12px;
+  }
+  .tool .ok { width: 30px; height: 30px; border-radius: 50%; background: var(--leaf); border: 3px solid var(--ink); display: grid; place-items: center; }
+  .tool.no { background: var(--pink); }
+  .tool.no s { text-decoration-thickness: 4px; }
+  .tool.no .ok { background: #fff; }
+</style>
+</head>
+<body>
+
+<!-- 1 · Kid sign-in -->
+<section class="slide leaf" id="g1">
+  <div class="copy" style="width:460px">
+    <span class="step"><i>01</i>Kid side</span>
+    <h2 style="font-size:62px">Plant your money, <b>watch it grow</b></h2>
+    <p class="sub" style="font-size:25px">Kids 8–12 sign in with a 4-digit PIN under a parent's account. No card, and no PayPal login for kids.</p>
+  </div>
+  <div class="phones three">
+    <div class="phone tilt-l drop"><img src="screens/welcome.png" alt=""></div>
+    <div class="phone lift"><img src="screens/kid-login-pick.png" alt=""></div>
+    <div class="phone tilt-r drop"><img src="screens/kid-home.png" alt=""></div>
+  </div>
+  <div class="brand"><svg width="44" height="48" viewBox="0 0 200 220" aria-hidden="true"><path d="M100 72 L100 40" stroke="#141414" stroke-width="10" stroke-linecap="round"/><path d="M100 46 C82 22 54 22 44 36 C58 54 86 56 100 46 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 40 C116 12 150 10 160 26 C146 46 118 50 100 40 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 68 C150 68 178 106 178 148 C178 192 146 214 100 214 C54 214 22 192 22 148 C22 106 50 68 100 68 Z" fill="#FFC93C" stroke="#141414" stroke-width="9"/><circle cx="78" cy="138" r="12" fill="#141414"/><circle cx="122" cy="138" r="12" fill="#141414"/><path d="M86 162 Q100 184 114 162 Z" fill="#141414"/></svg>Sprout</div>
+</section>
+
+<!-- 2 · Goals -->
+<section class="slide orange" id="g2">
+  <div class="copy">
+    <span class="step"><i>02</i>Savings goals</span>
+    <h2>Saving for a <b>Lego set</b></h2>
+    <p class="sub">The balance is virtual credit, added up from allowance and chores. The goal plant grows a stage as the kid gets closer.</p>
+  </div>
+  <div class="phones">
+    <div class="phone tilt-l"><img src="screens/kid-home.png" alt=""></div>
+    <div class="phone tilt-r drop"><img src="screens/kid-goal.png" alt=""></div>
+  </div>
+  <div class="brand"><svg width="44" height="48" viewBox="0 0 200 220" aria-hidden="true"><path d="M100 72 L100 40" stroke="#141414" stroke-width="10" stroke-linecap="round"/><path d="M100 46 C82 22 54 22 44 36 C58 54 86 56 100 46 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 40 C116 12 150 10 160 26 C146 46 118 50 100 40 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 68 C150 68 178 106 178 148 C178 192 146 214 100 214 C54 214 22 192 22 148 C22 106 50 68 100 68 Z" fill="#FFC93C" stroke="#141414" stroke-width="9"/><circle cx="78" cy="138" r="12" fill="#141414"/><circle cx="122" cy="138" r="12" fill="#141414"/><path d="M86 162 Q100 184 114 162 Z" fill="#141414"/></svg>Sprout</div>
+</section>
+
+<!-- 3 · Coach -->
+<section class="slide sky" id="g3">
+  <div class="copy" style="width:480px">
+    <span class="step"><i>03</i>AI money coach</span>
+    <h2>Ask <b>Sprout</b> before <b>you buy</b></h2>
+    <p class="sub">The coach checks the balance, works out weeks to goal and suggests chores. It has no payment tool.</p>
+  </div>
+  <div class="tools">
+    <div class="tool"><span class="ok"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5" fill="none" stroke="#141414" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Check balance</div>
+    <div class="tool"><span class="ok"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5" fill="none" stroke="#141414" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Weeks to goal</div>
+    <div class="tool"><span class="ok"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5" fill="none" stroke="#141414" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Suggest chores</div>
+    <div class="tool"><span class="ok"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5" fill="none" stroke="#141414" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Ask a parent</div>
+    <div class="tool no"><span class="ok"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" fill="none" stroke="#141414" stroke-width="4" stroke-linecap="round"/></svg></span><s>Pay for it</s></div>
+  </div>
+  <div class="phones">
+    <div class="phone tilt-r"><img src="screens/kid-coach.png" alt=""></div>
+  </div>
+  <div class="brand"><svg width="44" height="48" viewBox="0 0 200 220" aria-hidden="true"><path d="M100 72 L100 40" stroke="#141414" stroke-width="10" stroke-linecap="round"/><path d="M100 46 C82 22 54 22 44 36 C58 54 86 56 100 46 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 40 C116 12 150 10 160 26 C146 46 118 50 100 40 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 68 C150 68 178 106 178 148 C178 192 146 214 100 214 C54 214 22 192 22 148 C22 106 50 68 100 68 Z" fill="#FFC93C" stroke="#141414" stroke-width="9"/><circle cx="78" cy="138" r="12" fill="#141414"/><circle cx="122" cy="138" r="12" fill="#141414"/><path d="M86 162 Q100 184 114 162 Z" fill="#141414"/></svg>Sprout</div>
+</section>
+
+<!-- 4 · Chores -->
+<section class="slide sun" id="g4">
+  <div class="copy">
+    <span class="step"><i>04</i>Chores</span>
+    <h2><b>Earn it</b> with chores</h2>
+    <p class="sub">Kids tap “I did it”. A parent checks the chore and approves it, and the reward goes into the ledger.</p>
+  </div>
+  <div class="phones">
+    <div class="phone tilt-l"><img src="screens/kid-chores.png" alt=""></div>
+    <div class="phone tilt-r drop"><img src="screens/parent-chores.png" alt=""></div>
+  </div>
+  <div class="brand"><svg width="44" height="48" viewBox="0 0 200 220" aria-hidden="true"><path d="M100 72 L100 40" stroke="#141414" stroke-width="10" stroke-linecap="round"/><path d="M100 46 C82 22 54 22 44 36 C58 54 86 56 100 46 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 40 C116 12 150 10 160 26 C146 46 118 50 100 40 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 68 C150 68 178 106 178 148 C178 192 146 214 100 214 C54 214 22 192 22 148 C22 106 50 68 100 68 Z" fill="#FFC93C" stroke="#141414" stroke-width="9"/><circle cx="78" cy="138" r="12" fill="#141414"/><circle cx="122" cy="138" r="12" fill="#141414"/><path d="M86 162 Q100 184 114 162 Z" fill="#141414"/></svg>Sprout</div>
+</section>
+
+<!-- 5 · Parent -->
+<section class="slide paper" id="g5">
+  <div class="copy">
+    <span class="step"><i>05</i>Parent side</span>
+    <h2>Parents stay <b>in charge</b></h2>
+    <p class="sub">See every kid's savings, set the weekly allowance or give it now, and read the full transaction history.</p>
+  </div>
+  <div class="phones">
+    <div class="phone tilt-l"><img src="screens/parent-dashboard.png" alt=""></div>
+    <div class="phone tilt-r drop"><img src="screens/parent-kid.png" alt=""></div>
+  </div>
+  <div class="brand"><svg width="44" height="48" viewBox="0 0 200 220" aria-hidden="true"><path d="M100 72 L100 40" stroke="#141414" stroke-width="10" stroke-linecap="round"/><path d="M100 46 C82 22 54 22 44 36 C58 54 86 56 100 46 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 40 C116 12 150 10 160 26 C146 46 118 50 100 40 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 68 C150 68 178 106 178 148 C178 192 146 214 100 214 C54 214 22 192 22 148 C22 106 50 68 100 68 Z" fill="#FFC93C" stroke="#141414" stroke-width="9"/><circle cx="78" cy="138" r="12" fill="#141414"/><circle cx="122" cy="138" r="12" fill="#141414"/><path d="M86 162 Q100 184 114 162 Z" fill="#141414"/></svg>Sprout</div>
+</section>
+
+<!-- 6 · Approve & report -->
+<section class="slide paper" id="g6" style="background: var(--sky-50)">
+  <div class="copy">
+    <span class="step"><i>06</i>PayPal + reports</span>
+    <h2>The AI can <b>ask</b>. Only a parent can <b>pay</b>.</h2>
+    <p class="sub">Purchase requests wait for a parent, who pays with PayPal. The weekly report sums up what kids practised, never the raw chats.</p>
+  </div>
+  <div class="phones">
+    <div class="phone tilt-l"><img src="screens/parent-approvals.png" alt=""></div>
+    <div class="phone tilt-r drop"><img src="screens/parent-reports.png" alt=""></div>
+  </div>
+  <div class="brand"><svg width="44" height="48" viewBox="0 0 200 220" aria-hidden="true"><path d="M100 72 L100 40" stroke="#141414" stroke-width="10" stroke-linecap="round"/><path d="M100 46 C82 22 54 22 44 36 C58 54 86 56 100 46 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 40 C116 12 150 10 160 26 C146 46 118 50 100 40 Z" fill="#3DDC5A" stroke="#141414" stroke-width="9"/><path d="M100 68 C150 68 178 106 178 148 C178 192 146 214 100 214 C54 214 22 192 22 148 C22 106 50 68 100 68 Z" fill="#FFC93C" stroke="#141414" stroke-width="9"/><circle cx="78" cy="138" r="12" fill="#141414"/><circle cx="122" cy="138" r="12" fill="#141414"/><path d="M86 162 Q100 184 114 162 Z" fill="#141414"/></svg>Sprout</div>
+</section>
+
+</body>
+</html>
