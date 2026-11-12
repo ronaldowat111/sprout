@@ -1,0 +1,22 @@
+# Render blueprint: Dashboard > New > Blueprint, pick this repo.
+# Railway (sprout/railway.toml) is the main deploy; this one is the Render
+# mirror for the Render sponsor prize. Both build the same sprout/Dockerfile.
+# Free plan: the service sleeps after 15 min idle and the disk resets on
+# restart, so every start comes up with fresh demo data.
+services:
+  - type: web
+    name: sprout
+    runtime: docker
+    plan: free
+    dockerContext: ./sprout
+    dockerfilePath: ./sprout/Dockerfile
+    healthCheckPath: /up
+    envVars:
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: APP_KEY
+        sync: false
