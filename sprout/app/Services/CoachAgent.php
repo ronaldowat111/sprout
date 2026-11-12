@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
- * Sprout, the kid's AI money buddy. Runs a tool-use loop against Claude with
- * the tools in CoachTools. If no API key is configured, or the API call
- * fails, a small rule-based coach answers instead so the demo never breaks.
+ * Sprout, the kid's AI money buddy. Runs a tool-use loop with the tools in
+ * CoachTools against Claude, or against DeepSeek when only a DeepSeek key is
+ * set. If no API key is configured, or the API call fails, a small rule-based
+ * coach answers instead so the demo never breaks.
  */
 class CoachAgent
 {
@@ -23,6 +24,12 @@ class CoachAgent
     public function __construct(private LedgerService $ledger) {}
 
     public function enabled(): bool
+    {
+        return $this->useClaude() || DeepSeekClient::configured();
+    }
+
+    /** Claude wins when both keys are set; DeepSeek is the stand-in. */
+    private function useClaude(): bool
     {
         return filled(config('services.anthropic.key'));
     }
@@ -43,7 +50,9 @@ class CoachAgent
         $answer = null;
         if ($this->enabled()) {
             try {
-                $answer = $this->askClaude($kid, $history->all(), $text, $tools);
+                $answer = $this->useClaude()
+                    ? $this->askClaude($kid, $history->all(), $text, $tools)
+                    : $this->askDeepSeek($kid, $history->all(), $text, $tools);
             } catch (Throwable $e) {
                 Log::warning('Coach API call failed, using offline coach', ['error' => $e->getMessage()]);
             }
@@ -84,12 +93,23 @@ class CoachAgent
             return $fallback;
         }
 
+        $system = 'You write a one or two sentence note for a parent deciding whether to approve their child\'s purchase. Neutral and factual: what it is, whether the child saved for it, what is left after. No advice, no emojis.';
+
         try {
+            if (! $this->useClaude()) {
+                $reply = (new DeepSeekClient)->chat([
+                    ['role' => 'system', 'content' => $system],
+                    ['role' => 'user', 'content' => $facts],
+                ]);
+
+                return trim((string) ($reply['message']['content'] ?? '')) ?: $fallback;
+            }
+
             $response = $this->client()->beta->messages->create(
                 maxTokens: 16000,
                 messages: [['role' => 'user', 'content' => $facts]],
                 model: config('services.anthropic.model'),
-                system: 'You write a one or two sentence note for a parent deciding whether to approve their child\'s purchase. Neutral and factual: what it is, whether the child saved for it, what is left after. No advice, no emojis.',
+                system: $system,
                 outputConfig: ['effort' => 'low'],
                 fallbacks: 'default',
                 betas: ['server-side-fallback-2026-07-01'],
@@ -122,13 +142,25 @@ class CoachAgent
             ->map(fn ($m) => ($m->role === 'user' ? $kid->name : 'Sprout').': '.$m->content)
             ->join("\n");
         $facts = json_encode($stats, JSON_UNESCAPED_SLASHES);
+        $prompt = "Week facts (money in cents): {$facts}\n\nChats with Sprout this week:\n{$transcript}";
+        $system = "You write {$kid->name}'s weekly money report for their parent. Summarise, never quote the chats: the parent must not be able to reconstruct what the child said. topics: 2-4 short money skills practised (e.g. \"Needs vs. wants\", \"Waiting to buy\", \"Goal math\"). proud: one warm, specific sentence about a good money decision this week. dinner: one open question the parent could ask at dinner.";
 
         try {
+            if (! $this->useClaude()) {
+                $reply = (new DeepSeekClient)->chat([
+                    ['role' => 'system', 'content' => $system.' Answer with a JSON object only: {"topics": [string], "proud": string, "dinner": string}.'],
+                    ['role' => 'user', 'content' => $prompt],
+                ], json: true);
+                $data = json_decode((string) ($reply['message']['content'] ?? ''), true);
+
+                return $this->notesFrom($data, $fallback);
+            }
+
             $response = $this->client()->beta->messages->create(
                 maxTokens: 16000,
-                messages: [['role' => 'user', 'content' => "Week facts (money in cents): {$facts}\n\nChats with Sprout this week:\n{$transcript}"]],
+                messages: [['role' => 'user', 'content' => $prompt]],
                 model: config('services.anthropic.model'),
-                system: "You write {$kid->name}'s weekly money report for their parent. Summarise, never quote the chats: the parent must not be able to reconstruct what the child said. topics: 2-4 short money skills practised (e.g. \"Needs vs. wants\", \"Waiting to buy\", \"Goal math\"). proud: one warm, specific sentence about a good money decision this week. dinner: one open question the parent could ask at dinner.",
+                system: $system,
                 outputConfig: [
                     'effort' => 'low',
                     'format' => [
@@ -149,16 +181,19 @@ class CoachAgent
                 betas: ['server-side-fallback-2026-07-01'],
             );
 
-            $data = json_decode($this->text($response->content), true);
-
-            return is_array($data) && isset($data['proud'], $data['dinner'])
-                ? ['topics' => array_slice((array) ($data['topics'] ?? []), 0, 4), 'proud' => $data['proud'], 'dinner' => $data['dinner'], 'ai' => true]
-                : $fallback;
+            return $this->notesFrom(json_decode($this->text($response->content), true), $fallback);
         } catch (Throwable $e) {
             Log::warning('Weekly notes failed', ['error' => $e->getMessage()]);
 
             return $fallback;
         }
+    }
+
+    private function notesFrom(mixed $data, array $fallback): array
+    {
+        return is_array($data) && isset($data['proud'], $data['dinner'])
+            ? ['topics' => array_slice((array) ($data['topics'] ?? []), 0, 4), 'proud' => $data['proud'], 'dinner' => $data['dinner'], 'ai' => true]
+            : $fallback;
     }
 
     private function offlineNotes(Kid $kid, array $stats, array $chats): array
@@ -239,6 +274,51 @@ class CoachAgent
 
             $messages[] = ['role' => 'assistant', 'content' => $response->content];
             $messages[] = ['role' => 'user', 'content' => $results];
+        }
+
+        return null;
+    }
+
+    /**
+     * Same tool loop as askClaude, against DeepSeek's OpenAI-style API.
+     *
+     * @param  list<ChatMessage>  $history
+     */
+    private function askDeepSeek(Kid $kid, array $history, string $text, CoachTools $tools): ?string
+    {
+        $messages = [];
+        foreach ($history as $m) {
+            $messages[] = ['role' => $m->role === 'user' ? 'user' : 'assistant', 'content' => $m->content];
+        }
+        $messages[] = ['role' => 'user', 'content' => $text];
+        while ($messages[0]['role'] !== 'user') {
+            array_shift($messages);
+        }
+        array_unshift($messages, ['role' => 'system', 'content' => $this->systemPrompt($kid)]);
+
+        $client = new DeepSeekClient;
+        $definitions = DeepSeekClient::tools(CoachTools::definitions());
+
+        for ($round = 0; $round <= self::MAX_TOOL_ROUNDS; $round++) {
+            $reply = $client->chat($messages, $definitions);
+            $message = $reply['message'];
+            $calls = $message['tool_calls'] ?? [];
+
+            if ($calls === []) {
+                return trim((string) ($message['content'] ?? '')) ?: null;
+            }
+
+            // Send back only what the API expects in an assistant turn.
+            $messages[] = ['role' => 'assistant', 'content' => $message['content'] ?? null, 'tool_calls' => $calls];
+            foreach ($calls as $call) {
+                $input = json_decode($call['function']['arguments'] ?? '', true);
+                try {
+                    $content = $tools->run($call['function']['name'], is_array($input) ? $input : []);
+                } catch (Throwable $e) {
+                    $content = json_encode(['error' => $e->getMessage()]);
+                }
+                $messages[] = ['role' => 'tool', 'tool_call_id' => $call['id'], 'content' => $content];
+            }
         }
 
         return null;

@@ -40,6 +40,13 @@ return [
         'model' => env('SPROUT_COACH_MODEL', 'claude-opus-5-5'),
     ],
 
+    // Used by the coach only when no Anthropic key is set.
+    'deepseek' => [
+        'key' => env('DEEPSEEK_API_KEY'),
+        'model' => env('DEEPSEEK_MODEL', 'deepseek-chat'),
+        'base_url' => env('DEEPSEEK_BASE_URL', 'https://api.deepseek.com'),
+    ],
+
     'paypal' => [
         'client_id' => env('PAYPAL_CLIENT_ID'),
         'secret' => env('PAYPAL_CLIENT_SECRET'),

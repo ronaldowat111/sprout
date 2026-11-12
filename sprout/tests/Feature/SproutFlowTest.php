@@ -25,7 +25,8 @@ class SproutFlowTest extends TestCase
     {
         parent::setUp();
 
-        config(['services.anthropic.key' => null]); // offline coach: no network in tests
+        // Offline coach: no network in tests.
+        config(['services.anthropic.key' => null, 'services.deepseek.key' => null]);
         $this->parent = User::factory()->create(['name' => 'Dina']);
         $this->kid = new Kid(['name' => 'Rafi', 'avatar' => 'sun', 'weekly_allowance' => 500]);
         $this->kid->setPin('1234');
@@ -198,5 +199,41 @@ class SproutFlowTest extends TestCase
         $reply = $this->kid->chatMessages()->where('role', 'assistant')->latest('id')->first();
         $this->assertStringContainsString('$17', $reply->content); // $40 − $23
         $this->assertNotEmpty($reply->choices);
+    }
+
+    public function test_deepseek_coach_runs_tools_when_only_its_key_is_set(): void
+    {
+        config(['services.deepseek.key' => 'test-key']);
+        Http::fake([
+            '*/chat/completions' => Http::sequence()
+                ->push(['choices' => [[
+                    'finish_reason' => 'tool_calls',
+                    'message' => ['role' => 'assistant', 'content' => '', 'tool_calls' => [[
+                        'id' => 'call_1',
+                        'type' => 'function',
+                        'function' => ['name' => 'get_balance', 'arguments' => '{}'],
+                    ]]],
+                ]]])
+                ->push(['choices' => [[
+                    'finish_reason' => 'stop',
+                    'message' => ['role' => 'assistant', 'content' => 'You have $23.00 saved!'],
+                ]]]),
+        ]);
+
+        $this->withSession(['kid_id' => $this->kid->id])
+            ->post('/kid/coach', ['message' => 'How much do I have?']);
+
+        $reply = $this->kid->chatMessages()->where('role', 'assistant')->latest('id')->first();
+        $this->assertSame('You have $23.00 saved!', $reply->content);
+
+        // The second call carries the tool result from the ledger back to the model.
+        Http::assertSentCount(2);
+        Http::assertSent(function ($request) {
+            $last = collect($request['messages'] ?? [])->last();
+
+            return ($last['role'] ?? null) === 'tool'
+                && $last['tool_call_id'] === 'call_1'
+                && str_contains($last['content'], '23');
+        });
     }
 }
