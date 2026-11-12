@@ -15,7 +15,7 @@ Reference: `UI/UX_Example/image.png`, a three-screen savings-app onboarding in a
 
 ## 2. How Sprout adopts it
 
-Product, money model and stack come from `Sprout — Project Brief.md`. This file is only about look and feel. The style is already close to the Sprout tokens in `UI/sprout-handoff/CLAUDE.md`: 3 px ink borders, `4px 4px 0 #141414` shadows, flat colours. Push further in these places:
+This is already close to the Sprout tokens in `UI/sprout-handoff/CLAUDE.md`: 3 px ink borders, `4px 4px 0 #141414` shadows, flat colours. Push further in these places:
 
 ### Onboarding (K1): becomes a 3-step carousel
 Same skeleton as the reference. Each step gets one token colour and one sticker hero:
@@ -23,8 +23,8 @@ Same skeleton as the reference. Each step gets one token colour and one sticker 
 | Step | Background | Hero sticker | Headline (bold words in **bold**) | Subtitle |
 |---|---|---|---|---|
 | 1 | `leaf` #3DDC5A | Sprout mascot + coin burst | Plant Your Money, **Watch It Grow** | Sprout grows a new leaf every time you save. |
-| 2 | `orange` #FF9F4A | Trophy / goal flag with a progress bar | **Save** for What You **Really Want** | Set a goal, do chores, and see how many weeks to go. |
-| 3 | `sky` #8EC5FF | Chat bubble + mascot | Ask **Sprout** Before **You Buy** | Your money buddy helps you think. A grown-up says yes. |
+| 2 | `orange` #FF9F4A | Three jars (Spend / Save / Give) | **Split** Every Allowance **Your Way** | Spend some, save some, give some. You choose. |
+| 3 | `sky` #8EC5FF | Chat bubble + mascot | Ask **Sprout** Before **You Buy** | Your money buddy helps you think, but you decide. |
 
 - Top right: a `Skip` pill (white, 3 px ink border, 3 px shadow, minimum 44 px tap area).
 - Bottom: a full-width `Next →` pill in the **same colour as the background**, with an ink border and a 4 px shadow, like the reference. On the last step it becomes `Let's grow!` (ink fill, white text), with `I'm a parent` as a text link below it.
@@ -39,7 +39,6 @@ Same skeleton as the reference. Each step gets one token colour and one sticker 
 ### Parent mode (P1–P6): calmer
 - Keep the `paper` background. No full-bleed colour floods.
 - Borrow only the pill buttons, the hard shadows and the mixed-weight section titles. Stickers stay small (≤ 48 px) as card icons.
-- The Approvals page (P6) is the PayPal moment. The purchase request card shows the item, amount, the kid's reason and the AI summary. The PayPal button sits below it, unstyled (PayPal's own button rules apply).
 
 ## 3. Visual rules
 
@@ -69,3 +68,5 @@ Same skeleton as the reference. Each step gets one token colour and one sticker 
 - Don't use more than one flood colour per screen, and don't use gradients or blurred shadows.
 - Don't put more than one primary action on a screen.
 - Don't use flood colours in parent mode.
+
+

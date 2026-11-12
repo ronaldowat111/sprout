@@ -1,0 +1,28 @@
+# Secrets and local state never go into the image.
+.env
+.env.*
+!.env.example
+database/*.sqlite*
+
+# Rebuilt inside the image.
+node_modules
+vendor
+public/build
+public/hot
+bootstrap/ssr
+bootstrap/cache/*.php
+resources/js/actions
+resources/js/routes
+resources/js/wayfinder
+
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/pail
+
+.git
+.phpunit.cache
+.claude
+.vscode
+.idea

@@ -18,9 +18,12 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        $dina = User::factory()->create([
+        // No factory: Faker is a dev dependency and the deployed image seeds too.
+        $dina = User::forceCreate([
             'name' => 'Dina',
             'email' => 'dina@sprout.test',
+            'password' => 'password',
+            'email_verified_at' => now(),
         ]);
 
         // Rafi: 5 × $5 allowance + $2 chore − $4 stickers = $23.00
