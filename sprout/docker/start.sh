@@ -3,7 +3,10 @@
 set -e
 cd /app
 
-# Render provides the public URL; other hosts can set APP_URL themselves.
+# Railway and Render provide the public URL; other hosts can set APP_URL themselves.
+if [ -z "$APP_URL" ] && [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
+    export APP_URL="https://${RAILWAY_PUBLIC_DOMAIN}"
+fi
 export APP_URL="${APP_URL:-${RENDER_EXTERNAL_URL:-http://localhost:${PORT}}}"
 
 if [ -z "$APP_KEY" ]; then
@@ -13,8 +16,11 @@ fi
 
 # A fresh container has no database: create it with the demo family.
 # On hosts with a persistent disk, later starts only run new migrations.
-DB=database/database.sqlite
+# Point DB_DATABASE at a mounted volume (e.g. /data/database.sqlite) to keep data.
+DB="${DB_DATABASE:-database/database.sqlite}"
+export DB_DATABASE="$DB"
 if [ ! -f "$DB" ]; then
+    mkdir -p "$(dirname "$DB")"
     touch "$DB"
     php artisan migrate --seed --force
 else

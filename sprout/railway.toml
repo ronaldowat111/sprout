@@ -1,0 +1,10 @@
+# Railway: set the service Root Directory to /sprout and the config file
+# path to /sprout/railway.toml. Secrets go in the service Variables tab.
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/up"
+healthcheckTimeout = 120
+restartPolicyType = "ON_FAILURE"
